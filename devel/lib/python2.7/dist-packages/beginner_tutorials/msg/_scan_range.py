@@ -8,16 +8,13 @@ import struct
 
 
 class scan_range(genpy.Message):
-  _md5sum = "9231e3ac3c9a27ca200edbb34ea8ab8d"
+  _md5sum = "2d10e7530caaa326bc93d51700c285d9"
   _type = "beginner_tutorials/scan_range"
   _has_header = False  # flag to mark the presence of a Header object
-  _full_text = """float32 angle_min        # start angle of the scan [rad]
-float32 angle_max        # end angle of the scan [rad]
-
-float32 range_min        # minimum range value [m]
-float32 range_max		 # maximum range value [m]"""
-  __slots__ = ['angle_min','angle_max','range_min','range_max']
-  _slot_types = ['float32','float32','float32','float32']
+  _full_text = """float64 closest_point        # minimum range value [m]
+float64 farthest_point		 # maximum range value [m]"""
+  __slots__ = ['closest_point','farthest_point']
+  _slot_types = ['float64','float64']
 
   def __init__(self, *args, **kwds):
     """
@@ -27,7 +24,7 @@ float32 range_max		 # maximum range value [m]"""
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       angle_min,angle_max,range_min,range_max
+       closest_point,farthest_point
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -36,19 +33,13 @@ float32 range_max		 # maximum range value [m]"""
     if args or kwds:
       super(scan_range, self).__init__(*args, **kwds)
       # message fields cannot be None, assign default values for those that are
-      if self.angle_min is None:
-        self.angle_min = 0.
-      if self.angle_max is None:
-        self.angle_max = 0.
-      if self.range_min is None:
-        self.range_min = 0.
-      if self.range_max is None:
-        self.range_max = 0.
+      if self.closest_point is None:
+        self.closest_point = 0.
+      if self.farthest_point is None:
+        self.farthest_point = 0.
     else:
-      self.angle_min = 0.
-      self.angle_max = 0.
-      self.range_min = 0.
-      self.range_max = 0.
+      self.closest_point = 0.
+      self.farthest_point = 0.
 
   def _get_types(self):
     """
@@ -63,7 +54,7 @@ float32 range_max		 # maximum range value [m]"""
     """
     try:
       _x = self
-      buff.write(_get_struct_4f().pack(_x.angle_min, _x.angle_max, _x.range_min, _x.range_max))
+      buff.write(_get_struct_2d().pack(_x.closest_point, _x.farthest_point))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -79,7 +70,7 @@ float32 range_max		 # maximum range value [m]"""
       _x = self
       start = end
       end += 16
-      (_x.angle_min, _x.angle_max, _x.range_min, _x.range_max,) = _get_struct_4f().unpack(str[start:end])
+      (_x.closest_point, _x.farthest_point,) = _get_struct_2d().unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill
@@ -93,7 +84,7 @@ float32 range_max		 # maximum range value [m]"""
     """
     try:
       _x = self
-      buff.write(_get_struct_4f().pack(_x.angle_min, _x.angle_max, _x.range_min, _x.range_max))
+      buff.write(_get_struct_2d().pack(_x.closest_point, _x.farthest_point))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -110,7 +101,7 @@ float32 range_max		 # maximum range value [m]"""
       _x = self
       start = end
       end += 16
-      (_x.angle_min, _x.angle_max, _x.range_min, _x.range_max,) = _get_struct_4f().unpack(str[start:end])
+      (_x.closest_point, _x.farthest_point,) = _get_struct_2d().unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill
@@ -119,9 +110,9 @@ _struct_I = genpy.struct_I
 def _get_struct_I():
     global _struct_I
     return _struct_I
-_struct_4f = None
-def _get_struct_4f():
-    global _struct_4f
-    if _struct_4f is None:
-        _struct_4f = struct.Struct("<4f")
-    return _struct_4f
+_struct_2d = None
+def _get_struct_2d():
+    global _struct_2d
+    if _struct_2d is None:
+        _struct_2d = struct.Struct("<2d")
+    return _struct_2d

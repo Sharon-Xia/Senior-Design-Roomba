@@ -14,86 +14,61 @@
 
 (defclass beginner_tutorials::scan_range
   :super ros::object
-  :slots (_angle_min _angle_max _range_min _range_max ))
+  :slots (_closest_point _farthest_point ))
 
 (defmethod beginner_tutorials::scan_range
   (:init
    (&key
-    ((:angle_min __angle_min) 0.0)
-    ((:angle_max __angle_max) 0.0)
-    ((:range_min __range_min) 0.0)
-    ((:range_max __range_max) 0.0)
+    ((:closest_point __closest_point) 0.0)
+    ((:farthest_point __farthest_point) 0.0)
     )
    (send-super :init)
-   (setq _angle_min (float __angle_min))
-   (setq _angle_max (float __angle_max))
-   (setq _range_min (float __range_min))
-   (setq _range_max (float __range_max))
+   (setq _closest_point (float __closest_point))
+   (setq _farthest_point (float __farthest_point))
    self)
-  (:angle_min
-   (&optional __angle_min)
-   (if __angle_min (setq _angle_min __angle_min)) _angle_min)
-  (:angle_max
-   (&optional __angle_max)
-   (if __angle_max (setq _angle_max __angle_max)) _angle_max)
-  (:range_min
-   (&optional __range_min)
-   (if __range_min (setq _range_min __range_min)) _range_min)
-  (:range_max
-   (&optional __range_max)
-   (if __range_max (setq _range_max __range_max)) _range_max)
+  (:closest_point
+   (&optional __closest_point)
+   (if __closest_point (setq _closest_point __closest_point)) _closest_point)
+  (:farthest_point
+   (&optional __farthest_point)
+   (if __farthest_point (setq _farthest_point __farthest_point)) _farthest_point)
   (:serialization-length
    ()
    (+
-    ;; float32 _angle_min
-    4
-    ;; float32 _angle_max
-    4
-    ;; float32 _range_min
-    4
-    ;; float32 _range_max
-    4
+    ;; float64 _closest_point
+    8
+    ;; float64 _farthest_point
+    8
     ))
   (:serialize
    (&optional strm)
    (let ((s (if strm strm
               (make-string-output-stream (send self :serialization-length)))))
-     ;; float32 _angle_min
-       (sys::poke _angle_min (send s :buffer) (send s :count) :float) (incf (stream-count s) 4)
-     ;; float32 _angle_max
-       (sys::poke _angle_max (send s :buffer) (send s :count) :float) (incf (stream-count s) 4)
-     ;; float32 _range_min
-       (sys::poke _range_min (send s :buffer) (send s :count) :float) (incf (stream-count s) 4)
-     ;; float32 _range_max
-       (sys::poke _range_max (send s :buffer) (send s :count) :float) (incf (stream-count s) 4)
+     ;; float64 _closest_point
+       (sys::poke _closest_point (send s :buffer) (send s :count) :double) (incf (stream-count s) 8)
+     ;; float64 _farthest_point
+       (sys::poke _farthest_point (send s :buffer) (send s :count) :double) (incf (stream-count s) 8)
      ;;
      (if (null strm) (get-output-stream-string s))))
   (:deserialize
    (buf &optional (ptr- 0))
-   ;; float32 _angle_min
-     (setq _angle_min (sys::peek buf ptr- :float)) (incf ptr- 4)
-   ;; float32 _angle_max
-     (setq _angle_max (sys::peek buf ptr- :float)) (incf ptr- 4)
-   ;; float32 _range_min
-     (setq _range_min (sys::peek buf ptr- :float)) (incf ptr- 4)
-   ;; float32 _range_max
-     (setq _range_max (sys::peek buf ptr- :float)) (incf ptr- 4)
+   ;; float64 _closest_point
+     (setq _closest_point (sys::peek buf ptr- :double)) (incf ptr- 8)
+   ;; float64 _farthest_point
+     (setq _farthest_point (sys::peek buf ptr- :double)) (incf ptr- 8)
    ;;
    self)
   )
 
-(setf (get beginner_tutorials::scan_range :md5sum-) "9231e3ac3c9a27ca200edbb34ea8ab8d")
+(setf (get beginner_tutorials::scan_range :md5sum-) "2d10e7530caaa326bc93d51700c285d9")
 (setf (get beginner_tutorials::scan_range :datatype-) "beginner_tutorials/scan_range")
 (setf (get beginner_tutorials::scan_range :definition-)
-      "float32 angle_min        # start angle of the scan [rad]
-float32 angle_max        # end angle of the scan [rad]
-
-float32 range_min        # minimum range value [m]
-float32 range_max		 # maximum range value [m]
+      "float64 closest_point        # minimum range value [m]
+float64 farthest_point		 # maximum range value [m]
 ")
 
 
 
-(provide :beginner_tutorials/scan_range "9231e3ac3c9a27ca200edbb34ea8ab8d")
+(provide :beginner_tutorials/scan_range "2d10e7530caaa326bc93d51700c285d9")
 
 

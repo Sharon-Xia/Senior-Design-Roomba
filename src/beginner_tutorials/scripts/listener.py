@@ -37,11 +37,26 @@
 ## to the 'chatter' topic
 
 import rospy
-from std_msgs.msg import String
 from std_msgs.msg import Float64
+from sensor_msgs.msg import LaserScan
+from beginner_tutorials.msg import scan_range
+#from dynamic_reconfigure.parameter_generator import *
+
+
+pub_closest = rospy.Publisher('/scan_range', scan_range, queue_size=10)
+scan = scan_range()
+
 
 def callback(data):
-    rospy.loginfo(rospy.get_caller_id() + 'I heard %s', data.data)
+    ranges = [r for r in data.ranges if r < data.range_max and r > data.range_min]
+    rospy.loginfo(rospy.get_caller_id() + ' closest_point :  %f', min(ranges))
+    rospy.loginfo(rospy.get_caller_id() + ' farthest_point :  %f', max(ranges))
+
+    scan.closest_point = min(ranges)
+    scan.farthest_point = max(ranges)
+    pub_closest.publish(scan)
+
+
 
 def listener():
 
@@ -52,9 +67,7 @@ def listener():
     # run simultaneously.
     rospy.init_node('listener', anonymous=True)
 
-    rospy.Subscriber('/talker', String, callback)
-    rospy.Subscriber('/scan', Float64, callback)
-    rospy.Subscriber('/farthest_point', Float64, callback)
+    rospy.Subscriber('/scan', LaserScan, callback)
 
 
     # spin() simply keeps python from exiting until this node is stopped

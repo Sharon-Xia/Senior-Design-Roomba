@@ -24,32 +24,22 @@ struct scan_range_
   typedef scan_range_<ContainerAllocator> Type;
 
   scan_range_()
-    : angle_min(0.0)
-    , angle_max(0.0)
-    , range_min(0.0)
-    , range_max(0.0)  {
+    : closest_point(0.0)
+    , farthest_point(0.0)  {
     }
   scan_range_(const ContainerAllocator& _alloc)
-    : angle_min(0.0)
-    , angle_max(0.0)
-    , range_min(0.0)
-    , range_max(0.0)  {
+    : closest_point(0.0)
+    , farthest_point(0.0)  {
   (void)_alloc;
     }
 
 
 
-   typedef float _angle_min_type;
-  _angle_min_type angle_min;
+   typedef double _closest_point_type;
+  _closest_point_type closest_point;
 
-   typedef float _angle_max_type;
-  _angle_max_type angle_max;
-
-   typedef float _range_min_type;
-  _range_min_type range_min;
-
-   typedef float _range_max_type;
-  _range_max_type range_max;
+   typedef double _farthest_point_type;
+  _farthest_point_type farthest_point;
 
 
 
@@ -80,10 +70,8 @@ return s;
 template<typename ContainerAllocator1, typename ContainerAllocator2>
 bool operator==(const ::beginner_tutorials::scan_range_<ContainerAllocator1> & lhs, const ::beginner_tutorials::scan_range_<ContainerAllocator2> & rhs)
 {
-  return lhs.angle_min == rhs.angle_min &&
-    lhs.angle_max == rhs.angle_max &&
-    lhs.range_min == rhs.range_min &&
-    lhs.range_max == rhs.range_max;
+  return lhs.closest_point == rhs.closest_point &&
+    lhs.farthest_point == rhs.farthest_point;
 }
 
 template<typename ContainerAllocator1, typename ContainerAllocator2>
@@ -140,12 +128,12 @@ struct MD5Sum< ::beginner_tutorials::scan_range_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "9231e3ac3c9a27ca200edbb34ea8ab8d";
+    return "2d10e7530caaa326bc93d51700c285d9";
   }
 
   static const char* value(const ::beginner_tutorials::scan_range_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x9231e3ac3c9a27caULL;
-  static const uint64_t static_value2 = 0x200edbb34ea8ab8dULL;
+  static const uint64_t static_value1 = 0x2d10e7530caaa326ULL;
+  static const uint64_t static_value2 = 0xbc93d51700c285d9ULL;
 };
 
 template<class ContainerAllocator>
@@ -164,11 +152,8 @@ struct Definition< ::beginner_tutorials::scan_range_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "float32 angle_min        # start angle of the scan [rad]\n"
-"float32 angle_max        # end angle of the scan [rad]\n"
-"\n"
-"float32 range_min        # minimum range value [m]\n"
-"float32 range_max		 # maximum range value [m]\n"
+    return "float64 closest_point        # minimum range value [m]\n"
+"float64 farthest_point		 # maximum range value [m]\n"
 ;
   }
 
@@ -187,10 +172,8 @@ namespace serialization
   {
     template<typename Stream, typename T> inline static void allInOne(Stream& stream, T m)
     {
-      stream.next(m.angle_min);
-      stream.next(m.angle_max);
-      stream.next(m.range_min);
-      stream.next(m.range_max);
+      stream.next(m.closest_point);
+      stream.next(m.farthest_point);
     }
 
     ROS_DECLARE_ALLINONE_SERIALIZER
@@ -209,14 +192,10 @@ struct Printer< ::beginner_tutorials::scan_range_<ContainerAllocator> >
 {
   template<typename Stream> static void stream(Stream& s, const std::string& indent, const ::beginner_tutorials::scan_range_<ContainerAllocator>& v)
   {
-    s << indent << "angle_min: ";
-    Printer<float>::stream(s, indent + "  ", v.angle_min);
-    s << indent << "angle_max: ";
-    Printer<float>::stream(s, indent + "  ", v.angle_max);
-    s << indent << "range_min: ";
-    Printer<float>::stream(s, indent + "  ", v.range_min);
-    s << indent << "range_max: ";
-    Printer<float>::stream(s, indent + "  ", v.range_max);
+    s << indent << "closest_point: ";
+    Printer<double>::stream(s, indent + "  ", v.closest_point);
+    s << indent << "farthest_point: ";
+    Printer<double>::stream(s, indent + "  ", v.farthest_point);
   }
 };
 

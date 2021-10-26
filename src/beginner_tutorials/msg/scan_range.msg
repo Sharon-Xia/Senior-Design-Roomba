@@ -1,5 +1,2 @@
-float32 angle_min        # start angle of the scan [rad]
-float32 angle_max        # end angle of the scan [rad]
-
-float32 range_min        # minimum range value [m]
-float32 range_max		 # maximum range value [m]
+float64 closest_point        # minimum range value [m]
+float64 farthest_point		 # maximum range value [m]

@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # Software License Agreement (BSD License)
 #
 # Copyright (c) 2008, Willow Garage, Inc.
@@ -43,18 +43,12 @@ from beginner_tutorials.msg import scan_range
 #from dynamic_reconfigure.parameter_generator import *
 
 
-pub_closest = rospy.Publisher('/scan_range', scan_range, queue_size=10)
-scan = scan_range()
-
+# pub_closest = rospy.Publisher('/closest_point', String, queue_size=10)
+# pub_farthest = rospy.Publisher('/farthest_point', String, queue_size=10)
 
 def callback(data):
-    ranges = [r for r in data.ranges if r < data.range_max and r > data.range_min]
-    rospy.loginfo(rospy.get_caller_id() + ' closest_point :  %f', min(ranges))
-    rospy.loginfo(rospy.get_caller_id() + ' farthest_point :  %f', max(ranges))
-
-    scan.closest_point = min(ranges)
-    scan.farthest_point = max(ranges)
-    pub_closest.publish(scan)
+    rospy.loginfo(rospy.get_caller_id() + ' closest_point:  %f', data.closest_point)
+    rospy.loginfo(rospy.get_caller_id() + ' farthest_point:  %f', data.farthest_point)
 
 
 
@@ -65,9 +59,9 @@ def listener():
     # anonymous=True flag means that rospy will choose a unique
     # name for our 'listener' node so that multiple listeners can
     # run simultaneously.
-    rospy.init_node('listener', anonymous=True)
+    rospy.init_node('scan_range_listener', anonymous=True)
 
-    rospy.Subscriber('/scan', LaserScan, callback)
+    rospy.Subscriber('/scan_range', scan_range, callback)
 
 
     # spin() simply keeps python from exiting until this node is stopped
