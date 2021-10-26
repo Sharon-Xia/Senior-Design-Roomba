@@ -1,0 +1,4 @@
+<launch>
+	<arg name="topic_name" default="/test_topic"/>
+	<node pkg='rostopic' type='rostopic' name='echo_node' output='screen' args = "echo $(arg topic_name)"/>
+</launch>
