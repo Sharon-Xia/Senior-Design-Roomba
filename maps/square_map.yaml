@@ -1,4 +1,4 @@
-image: C:\Users\longl\OneDrive\2021 Fall\Senior Design Project\catkin_ws\maps/square_map.pgm
+image: /home/shxia/catkin_ws/maps/square_map.pgm
 resolution: 0.050000
 origin: [-1,-1, 0.000000]
 negate: 0
