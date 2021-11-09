@@ -51,6 +51,10 @@ def callback(data):
     ranges = [r for r in data.ranges if r < data.range_max and r > data.range_min]
     rospy.loginfo(rospy.get_caller_id() + ' closest_point :  %f', min(ranges))
     rospy.loginfo(rospy.get_caller_id() + ' farthest_point :  %f', max(ranges))
+    rospy.loginfo(rospy.get_caller_id() + ' num_points: %f', len(data.ranges))
+    rospy.loginfo(rospy.get_caller_id() + ' min_angle: %f', data.angle_min)
+    rospy.loginfo(rospy.get_caller_id() + ' max_angle: %f', data.angle_max)
+    rospy.loginfo(rospy.get_caller_id() + ' angle_increment: %f', data.angle_increment)
 
     scan.closest_point = min(ranges)
     scan.farthest_point = max(ranges)
