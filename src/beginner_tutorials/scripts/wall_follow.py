@@ -105,7 +105,7 @@ class WallFollow:
         """ 
         """
         thetaAtLeft = pi/2
-        leftDist = self.getRange(thetaAtLeft)
+        leftDist = self.getRange(data, thetaAtLeft)
 
         error = self.followLeft(data, leftDist) #TODO: replace with error returned by followLeft
         #send error to pid_control
