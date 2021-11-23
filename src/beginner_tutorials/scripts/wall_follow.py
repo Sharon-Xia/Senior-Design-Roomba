@@ -66,7 +66,7 @@ class WallFollow:
         global ki
         global kd
         #TODO: Use kp, ki & kd to implement a PID controller for 
-        angle = (kp * error) + (kd * (prev_error - error)) + (ki * integral)
+        angle = (kp * error) + (kd * (error - prev_error)) + (ki * integral)
 
 
         drive_msg = AckermannDriveStamped()
@@ -95,6 +95,8 @@ class WallFollow:
 
         alpha = math.atan((a * math.cos(WALL_FOLLOW_THETA) - b)/(a * math.sin(WALL_FOLLOW_THETA)))
         Dt = b * math.cos(alpha)
+
+        print("alpha: " + str(alpha))
 
         # calculate Dt+1
         ts = time.time()
