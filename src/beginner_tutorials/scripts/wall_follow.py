@@ -31,6 +31,8 @@ CAR_LENGTH = 0.50 # Traxxas Rally is 20 inches or 0.5 meters
 prev_velocity = 0.0
 prev_ts = time.time()
 
+pi = math.pi
+
 
 class WallFollow:
     """ Implement Wall Following on the car
