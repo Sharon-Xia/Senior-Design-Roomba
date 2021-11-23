@@ -11,6 +11,9 @@ from sensor_msgs.msg import Image, LaserScan
 from ackermann_msgs.msg import AckermannDriveStamped, AckermannDrive
 
 
+wall_follow_tick = 0
+wall_follow_rate = 100
+
 pi = math.pi
 
 #PID CONTROL PARAMS
@@ -77,6 +80,8 @@ class WallFollow:
         prev_error = error
         integral += error
 
+        # 
+
 
     def followLeft(self, data, leftDist):
         #Follow left wall as per the algorithm 
@@ -104,6 +109,12 @@ class WallFollow:
     def lidar_callback(self, data):
         """ 
         """
+        if (wall_follow_tick < wall_follow_rate):
+            wall_follow_tick += 1
+            return 
+
+        wall_follow_tick = 0
+
         thetaAtLeft = pi/2
         leftDist = self.getRange(data, thetaAtLeft)
 
