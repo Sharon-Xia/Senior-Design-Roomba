@@ -11,9 +11,6 @@ from sensor_msgs.msg import Image, LaserScan
 from ackermann_msgs.msg import AckermannDriveStamped, AckermannDrive
 
 
-wall_follow_tick = 0
-wall_follow_rate = 100
-
 pi = math.pi
 
 #PID CONTROL PARAMS
@@ -40,6 +37,10 @@ prev_ts = time.time()
 class WallFollow:
     """ Implement Wall Following on the car
     """
+
+    wall_follow_tick = 0
+    wall_follow_rate = 100
+
     def __init__(self):
         #Topics & Subs, Pubs
         lidarscan_topic = '/scan'
@@ -111,11 +112,11 @@ class WallFollow:
     def lidar_callback(self, data):
         """ 
         """
-        if (wall_follow_tick < wall_follow_rate):
-            wall_follow_tick += 1
+        if (self.wall_follow_tick < self.wall_follow_rate):
+            self.wall_follow_tick += 1
             return 
 
-        wall_follow_tick = 0
+        self.wall_follow_tick = 0
 
         thetaAtLeft = pi/2
         leftDist = self.getRange(data, thetaAtLeft)
