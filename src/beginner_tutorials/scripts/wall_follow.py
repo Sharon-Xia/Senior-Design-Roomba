@@ -126,9 +126,9 @@ class WallFollow:
         theta: radians
         return: m/s
         """
-        if theta >= 0 and theta <= radians(10):
+        if theta >= 0 and theta <= math.radians(10):
             return 1.5
-        elif theta > radians(10) and theta <= radians(20): 
+        elif theta > math.radians(10) and theta <= math.radians(20): 
             return 1.0
         else: 
             return 0.5
