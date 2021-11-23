@@ -83,7 +83,7 @@ class WallFollow:
 
         # write logs to terminal
         print("angle: " + str(angle))
-        print("speed: " + drive_msg.drive.speed)
+        print("speed: " + str(drive_msg.drive.speed))
 
 
     def followLeft(self, data, leftDist):
