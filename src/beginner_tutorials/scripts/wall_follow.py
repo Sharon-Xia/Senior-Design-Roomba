@@ -14,7 +14,7 @@ from ackermann_msgs.msg import AckermannDriveStamped, AckermannDrive
 pi = math.pi
 
 #PID CONTROL PARAMS
-kp = 14#TODO
+kp = 1 #TODO
 kd = .09#TODO
 ki = 0#TODO
 servo_offset = 0.0
@@ -27,7 +27,7 @@ WALL_FOLLOW_THETA = pi/3 # 0 < THETA <= 70; 60, pi/6 from top = 0
 
 ANGLE_RANGE = 270 # Hokuyo 10LX has 270 degrees scan
 DESIRED_DISTANCE_RIGHT = 0.9 # meters
-DESIRED_DISTANCE_LEFT = 0.55
+DESIRED_DISTANCE_LEFT = 0.9
 VELOCITY = 2.00 # meters per second
 CAR_LENGTH = 0.50 # Traxxas Rally is 20 inches or 0.5 meters
 
@@ -39,7 +39,7 @@ class WallFollow:
     """
 
     wall_follow_tick = 0
-    wall_follow_rate = 100
+    wall_follow_rate = 10
 
     def __init__(self):
         #Topics & Subs, Pubs
@@ -66,7 +66,7 @@ class WallFollow:
         global ki
         global kd
         #TODO: Use kp, ki & kd to implement a PID controller for 
-        angle = (kp * error) + (kd * (error - prev_error)) + (ki * integral)
+        angle = (kp * error) + (-kd * (error - prev_error)) + (ki * integral)
 
 
         drive_msg = AckermannDriveStamped()
@@ -82,6 +82,7 @@ class WallFollow:
         integral += error
 
         # write logs to terminal
+        print("error: " + str(error))
         print("angle: " + str(angle))
         print("speed: " + str(drive_msg.drive.speed))
 
@@ -103,8 +104,17 @@ class WallFollow:
         L = prev_velocity * (ts - prev_ts)
         Dt1 = L * math.sin(alpha)
 
-        D = Dt + Dt1
-        return DESIRED_DISTANCE_LEFT - D # e(t)
+        D = Dt + Dt1 
+        De = DESIRED_DISTANCE_LEFT - D# distance error
+
+        print("Distance Error: " + str(De))
+
+        # distance influence on error
+        Kmax = pi/6 # max turn from distance error
+        Kd = -pi/6 # tune the amount of turn from distance error; positive if right
+        Et = min(Kmax, De * Kd)
+
+        return alpha + Et# e(t)
 
     def followRight(self, data, rightDist):
         """
@@ -142,12 +152,13 @@ class WallFollow:
         theta: radians
         return: m/s
         """
+        theta = abs(theta)
         if theta >= 0 and theta <= math.radians(10):
             return 1.5
         elif theta > math.radians(10) and theta <= math.radians(20): 
             return 1.0
         else: 
-            return 0.5
+            return .7
 
 def main(args):
     rospy.init_node("WallFollow_node", anonymous=True)
