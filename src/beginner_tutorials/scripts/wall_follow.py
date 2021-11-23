@@ -10,6 +10,9 @@ import rospy
 from sensor_msgs.msg import Image, LaserScan
 from ackermann_msgs.msg import AckermannDriveStamped, AckermannDrive
 
+
+pi = math.pi
+
 #PID CONTROL PARAMS
 kp = 14#TODO
 kd = .09#TODO
@@ -30,9 +33,6 @@ CAR_LENGTH = 0.50 # Traxxas Rally is 20 inches or 0.5 meters
 
 prev_velocity = 0.0
 prev_ts = time.time()
-
-pi = math.pi
-
 
 class WallFollow:
     """ Implement Wall Following on the car
