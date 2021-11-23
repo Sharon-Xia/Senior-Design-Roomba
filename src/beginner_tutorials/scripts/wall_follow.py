@@ -80,7 +80,9 @@ class WallFollow:
         prev_error = error
         integral += error
 
-        # 
+        # write logs to terminal
+        print("angle: " + str(angle))
+        print("speed: " + drive_msg.drive.speed)
 
 
     def followLeft(self, data, leftDist):
