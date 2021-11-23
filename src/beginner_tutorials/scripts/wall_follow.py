@@ -85,13 +85,13 @@ class WallFollow:
         a = self.getRange(data, theta0)
         b = self.getRange(data, pi/2)
 
-        alpha = atan((a * cos(WALL_FOLLOW_THETA) - b)/(a * sin(WALL_FOLLOW_THETA)))
-        Dt = b * cos(alpha)
+        alpha = math.atan((a * math.cos(WALL_FOLLOW_THETA) - b)/(a * math.sin(WALL_FOLLOW_THETA)))
+        Dt = b * math.cos(alpha)
 
         # calculate Dt+1
         ts = time.time()
         L = prev_velocity * (ts - prev_ts)
-        Dt1 = L * sin(alpha)
+        Dt1 = L * math.sin(alpha)
 
         D = Dt + Dt1
         return DESIRED_DISTANCE_LEFT - D # e(t)
