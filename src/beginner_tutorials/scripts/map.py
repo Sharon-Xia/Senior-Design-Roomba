@@ -44,13 +44,13 @@ class Map:
 		def adjustLoc(self, loc):
 			x = (loc.x() - self.minX) * self.PIXEL_ADJUST
 			y = (loc.y() - self.minY) * self.PIXEL_ADJUST
-			return Location(x, y, loc.timestamp())
+			return Location(int(x), int(y), loc.timestamp())
 
 		def adjustWidth(self):
-			return self.width() * self.PIXEL_ADJUST
+			return int(self.width() * self.PIXEL_ADJUST) + 5
 
 		def adjustHeight(self):
-			return self.height() * self.PIXEL_ADJUST
+			return int(self.height() * self.PIXEL_ADJUST) + 5
 
 
 	def __init__(self, name):
@@ -79,13 +79,13 @@ class Map:
 		if self.outline.width() == 0 or self.outline.height() == 0:
 			return
 
-		img = Image.new('RGB', (self.outline.width(), self.outline.height()))
+		img = Image.new('RGB', (self.outline.adjustWidth(), self.outline.adjustHeight()))
 
 		for loc in self.map:
 			adjustedLoc = self.outline.adjustLoc(loc)
 			img.putpixel((adjustedLoc.x(), adjustedLoc.y()), (0, 0, 0))
 
-		img.save("{self.name}.png")
+		img.save(self.nameOfRun + ".png")
 		img.show()
 
 		return img

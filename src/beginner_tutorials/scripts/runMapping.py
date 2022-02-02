@@ -41,6 +41,7 @@ class MapScan:
 		self.roomBot = Roombot("test-run")
 
 
+
 	# scan_msg: http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/LaserScan.html 
 	
 	def scan_callback(self, scan_msg):
@@ -74,8 +75,10 @@ class MapScan:
 
 		orientation = [odom_msg.pose.pose.orientation.x, odom_msg.pose.pose.orientation.y, odom_msg.pose.pose.orientation.z, odom_msg.pose.pose.orientation.w]
 		(roll, pitch, yaw) = euler_from_quaternion(orientation)
-		rospy.loginfo(yaw)
-		adiff = self.roomBot.updateRealAngle(yaw)
+
+		realAngle = self.yaw_to_theta(yaw)
+		rospy.loginfo("real angle: " + str(realAngle))
+		adiff = self.roomBot.updateRealAngle(realAngle)
 
 		return
 
@@ -87,16 +90,22 @@ class MapScan:
 		return int((theta - data.angle_min)/data.angle_increment)
 
 
+	def yaw_to_theta(self, yaw):
+		theta = math.pi/2 + yaw
+		return theta if theta < math.pi else theta - (2 * math.pi)
+
+
 def main(args):
 	rospy.init_node("Mapping_node", anonymous=True)
 	wf = MapScan()
+	atexit.register(wf.roomBot.map.generatePNG)
+
 	try:
 		rospy.sleep(0.1)
 		rospy.spin()
 	except KeyboardInterrupt:
-		if wf:
-			rospy.loginfo("generating image")
-			wf.roomBot.map.generatePNG()
+		rospy.loginfo("generating image")
+		wf.roomBot.map.generatePNG()
 
 
 

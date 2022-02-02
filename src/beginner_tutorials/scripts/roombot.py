@@ -116,7 +116,7 @@ class Roombot:
 		ddiff = currentLoc.distanceFrom(realLoc)
 
 		rospy.loginfo("currentLoc: " + str(currentLoc) + "   realLoc: " + str(realLoc))
-		rospy.loginfo("x-diff: {xdiff}  y-diff: {ydiff}  distance-diff: {ddiff}")
+		rospy.loginfo("x-diff: " + str(xdiff) + "  y-diff: " + str(ydiff) + "  distance-diff: " + str(ddiff))
 
 		return ddiff
 
@@ -126,5 +126,5 @@ class Roombot:
 		adiff = self.currentAngle - self.realAngle
 
 		# TODO
-		rospy.loginfo("angle-diff: {adiff}\n")
+		rospy.loginfo("angle-diff: " + str(adiff))
 		return adiff

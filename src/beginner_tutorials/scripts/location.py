@@ -20,7 +20,7 @@ class Location:
 
 	def __str__(self):
 		time_string = self.Ts.strftime("%H:%M:%S")
-		return "x: {self.X}, y: {self.Y}, time: {time_string}"
+		return "x: " + str(self.X) + ", y: " + str(self.Y) + ", time: " + time_string
 
 
 	# comparing with another loc
