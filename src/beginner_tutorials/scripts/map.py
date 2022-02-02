@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+import rospy
+
 # https://www.codegrepper.com/code-examples/python/draw+pixel+by+pixel+python
 from PIL import Image
 
@@ -82,7 +85,7 @@ class Map:
 			adjustedLoc = self.outline.adjustLoc(loc)
 			img.putpixel((adjustedLoc.x(), adjustedLoc.y()), (0, 0, 0))
 
-		img.save(f"{self.name}.png")
+		img.save("{self.name}.png")
 		img.show()
 
 		return img

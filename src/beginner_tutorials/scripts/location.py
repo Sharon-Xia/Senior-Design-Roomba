@@ -5,22 +5,22 @@ import math
 class Location:
 
 	def __init__(self, x, y, ts):
-		self.x = x
-		self.y = y
-		self.ts = ts
+		self.X = x
+		self.Y = y
+		self.Ts = ts
 
 	def x(self):
-		return self.x
+		return self.X
 
 	def y(self):
-		return self.y
+		return self.Y
 
 	def timestamp(self):
-		return self.ts
+		return self.Ts
 
 	def __str__(self):
-		time_string = self.ts.strftime("%H:%M:%S")
-		return f"x: {self.x}, y: {self.y}, time: {time_string}"
+		time_string = self.Ts.strftime("%H:%M:%S")
+		return "x: {self.X}, y: {self.Y}, time: {time_string}"
 
 
 	# comparing with another loc

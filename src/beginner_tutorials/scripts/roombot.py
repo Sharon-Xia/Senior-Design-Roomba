@@ -1,4 +1,7 @@
+#!/usr/bin/env python
+import rospy
 import math
+
 
 from map import *
 from location import *
@@ -14,7 +17,7 @@ pathThreshold = .3 # amount of noise to ignore for path traveled in ?? units
 
 class Roombot:
 
-	def __init__(self, roomMap, nameOfRun):
+	def __init__(self, nameOfRun):
 		self.map = Map(nameOfRun) 
 
 		self.distanceTraveled = 0.0
@@ -38,7 +41,7 @@ class Roombot:
 		self.resetDelta()
 
 		# append if difference great enough
-		if self.pathTraveled[-1].distanceFrom(currentLoc) > pathThreshold:
+		if self.map.getLastLocation().distanceFrom(currentLoc) > pathThreshold:
 			self.map.addPathTraveled(currentLoc)
 
 		return currentLoc # compare with actual location in ROS
@@ -102,7 +105,7 @@ class Roombot:
 
 	# updates real location
 	# compares calculated location for accuracy
-	def realLocation(self, realLoc):
+	def updateRealLocation(self, realLoc):
 		self.realLocation = realLoc
 
 		# TODO
@@ -112,16 +115,16 @@ class Roombot:
 		ydiff = currentLoc.compareY(realLoc)
 		ddiff = currentLoc.distanceFrom(realLoc)
 
-		print(f"currentLoc: {currentLoc}   realLoc: {realLoc}")
-		print(f"x-diff: {xdiff}  y-diff: {ydiff}  distance-diff: {ddiff}")
+		rospy.loginfo("currentLoc: " + str(currentLoc) + "   realLoc: " + str(realLoc))
+		rospy.loginfo("x-diff: {xdiff}  y-diff: {ydiff}  distance-diff: {ddiff}")
 
 		return ddiff
 
-	def realAngle(self, realAngle):
+	def updateRealAngle(self, realAngle):
 		self.realAngle = realAngle
 
 		adiff = self.currentAngle - self.realAngle
 
 		# TODO
-		print(f"angle-diff: {adiff}\n")
+		rospy.loginfo("angle-diff: {adiff}\n")
 		return adiff

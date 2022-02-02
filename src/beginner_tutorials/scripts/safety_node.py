@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import rospy
+from tf.transformations import euler_from_quaternion
 
 from sensor_msgs.msg import LaserScan
 from ackermann_msgs.msg import AckermannDrive
@@ -52,9 +53,14 @@ class Safety(object):
         if self.odom_sub_tick >= self.odom_sub_rate:
             rospy.loginfo("twist.linear.x, y, z: %f , %f, %f", odom_msg.twist.twist.linear.x, odom_msg.twist.twist.linear.y, odom_msg.twist.twist.linear.z)
             rospy.loginfo("twist.angular.x, y, z: %f , %f, %f", odom_msg.twist.twist.angular.x, odom_msg.twist.twist.angular.y, odom_msg.twist.twist.angular.z)
-            # rospy.loginfo("pose.position.x, y, z: %f , %f, %f", odom_msg.pose.pose.position.x, odom_msg.pose.pose.position.y, odom_msg.pose.pose.position.z)
-            rospy.loginfo("pose.orientation.x, y, z: %f , %f, %f", odom_msg.pose.pose.orientation.x, odom_msg.pose.pose.orientation.y, odom_msg.pose.pose.orientation.z)
+            rospy.loginfo("pose.position.x, y, z: %f , %f, %f", odom_msg.pose.pose.position.x, odom_msg.pose.pose.position.y, odom_msg.pose.pose.position.z)
+            rospy.loginfo("pose.orientation.x, y, z, w: %f , %f, %f, %f", odom_msg.pose.pose.orientation.x, odom_msg.pose.pose.orientation.y, odom_msg.pose.pose.orientation.z, odom_msg.pose.pose.orientation.w)
             
+
+            orientation = [odom_msg.pose.pose.orientation.x, odom_msg.pose.pose.orientation.y, odom_msg.pose.pose.orientation.z, odom_msg.pose.pose.orientation.w]
+            (roll, pitch, yaw) = euler_from_quaternion(orientation)
+            rospy.loginfo(yaw)
+
             self.speed = sqrt(odom_msg.twist.twist.linear.x ** 2 + (odom_msg.twist.twist.linear.y ** 2))
             if odom_msg.twist.twist.linear.x < 0: 
                 self.speed *= -1

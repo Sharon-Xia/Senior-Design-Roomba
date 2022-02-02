@@ -19,8 +19,8 @@ class TickCounter:
 	# name: string = name of tick
 	# returns: true if function is called, false if not called
 	def tick(self, name):
-		if not self.tickCounts.keys().contains(name):
-			raise IndexError(f"Reference Tick Error: no such tick [{name}]")
+		if name not in self.tickCounts.keys():
+			raise IndexError("Reference Tick Error: no such tick [{name}]")
 		
 		self.tickCounts[name] += 1
 

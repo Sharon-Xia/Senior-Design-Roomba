@@ -1,4 +1,8 @@
+#!/usr/bin/env python
+
+
 import rospy
+from tf.transformations import euler_from_quaternion
 import sys
 
 from sensor_msgs.msg import LaserScan
@@ -13,6 +17,7 @@ import math
 import atexit # call function on exit
 
 # front of vehicle: radians = 0
+
 # left of vehicle: radians > 0
 # right of vehicle: radians < 0
 SIDE_SENSOR_ANGLE = math.pi/3
@@ -61,13 +66,16 @@ class MapScan:
 		# TODO
 		# update real location in RoomBot
 		# calculate accuracy
+		x = odom_msg.pose.pose.position.x
+		y = odom_msg.pose.pose.position.y
+		rospy.loginfo(x)
+		realLoc = Location(x, y, datetime.now()) # TODO
+		ddiff = self.roomBot.updateRealLocation(realLoc)
 
-		realLoc = Location(odom_msg.pose.pose.position.x, odom_msg.pose.pose.position.y, datetime.now()) # TODO
-		ddiff = self.roomBot.realLocation(realLoc)
-
-		tanTheta = odom_msg.pose.pose.orientation.y / odom_msg.pose.pose.orientation.x
-		realAngle = math.atan(tanTheta)
-		adiff = self.roomBot.realAngle(realAngle)
+		orientation = [odom_msg.pose.pose.orientation.x, odom_msg.pose.pose.orientation.y, odom_msg.pose.pose.orientation.z, odom_msg.pose.pose.orientation.w]
+		(roll, pitch, yaw) = euler_from_quaternion(orientation)
+		rospy.loginfo(yaw)
+		adiff = self.roomBot.updateRealAngle(yaw)
 
 		return
 
@@ -82,9 +90,13 @@ class MapScan:
 def main(args):
 	rospy.init_node("Mapping_node", anonymous=True)
 	wf = MapScan()
-	atexit.register(wf.roomBot.map.generatePNG())
-	rospy.sleep(0.1)
-	rospy.spin()
+	try:
+		rospy.sleep(0.1)
+		rospy.spin()
+	except KeyboardInterrupt:
+		if wf:
+			rospy.loginfo("generating image")
+			wf.roomBot.map.generatePNG()
 
 
 
