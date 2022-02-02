@@ -23,6 +23,9 @@ import atexit # call function on exit
 SIDE_SENSOR_ANGLE = math.pi/3
 SCAN_ANGLES = [0, SIDE_SENSOR_ANGLE, -SIDE_SENSOR_ANGLE]
 
+# distances above sensitivity are ignored from map
+SCAN_SENSITIVITY = 10
+
 # Scanning for Roombot mapping
 # Inputs scanning data for map creation
 class MapScan:
@@ -56,7 +59,9 @@ class MapScan:
 			i = self.get_index_from_theta(scan_msg, theta)
 			distance = scan_msg.ranges[i]
 
-			self.roomBot.updateWallCoordinate(theta, distance)
+			#rospy.loginfo("distance: " + str(distance))
+			if distance < SCAN_SENSITIVITY:
+				self.roomBot.updateWallCoordinate(theta, distance)
 
 
 	# odom_msg: http://docs.ros.org/en/noetic/api/nav_msgs/html/msg/Odometry.html
@@ -65,6 +70,29 @@ class MapScan:
 			return
 
 		# TODO
+
+		# calculated orientations
+		# update distance 
+		ts = datetime.now()
+
+		speed = sqrt(odom_msg.twist.twist.linear.x ** 2 + (odom_msg.twist.twist.linear.y ** 2))
+        if odom_msg.twist.twist.linear.x < 0: 
+            speed *= -1
+        
+        # in seconds
+        timePassed = (self.roomBot.timeOfLastUpdate - ts) / 1000000
+
+        distance = timePassed * speed
+        self.roomBot.updateDistanceTraveled(distance)
+
+        # update angle 
+        deltaTheta = (odom_msg.twist.twist.linear.z) * timePassed
+        self.roomBot.updateAngle(deltaTheta)
+
+
+        # TODO : TEST CALCULATED ORIENTATIONS
+
+
 		# update real location in RoomBot
 		# calculate accuracy
 		x = odom_msg.pose.pose.position.x
@@ -114,3 +142,6 @@ if __name__=='__main__':
 
 
 # also try -- except KeyboardInterrupt
+
+
+#   roslaunch f1tenth_simulator simulator.launch

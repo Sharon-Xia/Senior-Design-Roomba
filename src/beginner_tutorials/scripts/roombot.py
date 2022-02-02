@@ -81,7 +81,9 @@ class Roombot:
 	def updateDistanceTraveled(self, distance):
 		self.deltaDistance += distance
 
-
+	# call when distance/angle updated
+	def updated(self):
+		self.timeOfLastUpdate = datetime.now()
 
 	"""
 	ROS version of getting sensor data

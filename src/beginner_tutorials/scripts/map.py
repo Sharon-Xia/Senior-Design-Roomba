@@ -14,7 +14,7 @@ class Map:
 
 	class Outline:
 		# keeps track of outer edges of map
-		PIXEL_ADJUST = 100
+		PIXEL_ADJUST = 25
 
 		def __init__(self):
 			self.minX = 0
@@ -74,18 +74,21 @@ class Map:
 		self.outline.updateOutline(loc)
 
 	def generatePNG(self):
+		rospy.loginfo("generating image")
 		
 		# null image
 		if self.outline.width() == 0 or self.outline.height() == 0:
 			return
 
-		img = Image.new('RGB', (self.outline.adjustWidth(), self.outline.adjustHeight()))
+		imageDimensions = (self.outline.adjustWidth(), self.outline.adjustHeight())
+		rospy.loginfo(imageDimensions)
+		img = Image.new('RGB', imageDimensions, "white")
 
 		for loc in self.map:
 			adjustedLoc = self.outline.adjustLoc(loc)
 			img.putpixel((adjustedLoc.x(), adjustedLoc.y()), (0, 0, 0))
 
-		img.save(self.nameOfRun + ".png")
+		img.save(self.nameOfRun + ".jpg")
 		img.show()
 
 		return img
