@@ -137,13 +137,8 @@ def main(args):
 	wf = MapScan()
 	atexit.register(wf.roomBot.end)
 
-	try:
-		rospy.sleep(0.1)
-		rospy.spin()
-	except KeyboardInterrupt:
-		rospy.loginfo("generating image")
-		wf.roomBot.map.generatePNG()
-
+	rospy.sleep(0.1)
+	rospy.spin()
 
 
 if __name__=='__main__':
