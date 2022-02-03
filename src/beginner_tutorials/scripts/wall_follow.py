@@ -156,8 +156,10 @@ class WallFollow:
         if theta >= 0 and theta <= math.radians(10):
             return 1.5
         elif theta > math.radians(10) and theta <= math.radians(20): 
-            return 1.0
-        else: 
+            return 1.2
+        elif theta > math.radians(20) and theta <= math.radians(35): 
+            return .85
+        else:
             return .7
 
 def main(args):

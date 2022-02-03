@@ -20,7 +20,7 @@ import atexit # call function on exit
 
 # left of vehicle: radians > 0
 # right of vehicle: radians < 0
-SIDE_SENSOR_ANGLE = math.pi/3
+SIDE_SENSOR_ANGLE = math.pi/2
 SCAN_ANGLES = [0, SIDE_SENSOR_ANGLE, -SIDE_SENSOR_ANGLE]
 
 # distances above sensitivity are ignored from map
@@ -32,10 +32,10 @@ class MapScan:
 
 	# for ROS
 	def __init__(self):
-		tickers = [("scan", 20), ("odom", 20)]
+		tickers = [("scan", 40), ("odom", 40)]
 		self.ticker = TickCounter(tickers)
 
-		#Topics & Subs, Pubs        
+		#Topics & Subs, Pubs
 		self.lidar_sub = rospy.Subscriber('/scan', LaserScan, self.scan_callback)#TODO: Subscribe to LIDAR
 		self.odom_sub = rospy.Subscriber('/odom', Odometry, self.odom_callback) # current speed
 
@@ -71,50 +71,59 @@ class MapScan:
 
 		# TODO
 
+		rospy.loginfo("")
+
 		# calculated orientations
 		# update distance 
-		ts = datetime.now()
+		prevTs = self.roomBot.timeOfLastUpdate
+		ts = self.roomBot.updateTs()
 
-		speed = sqrt(odom_msg.twist.twist.linear.x ** 2 + (odom_msg.twist.twist.linear.y ** 2))
-        if odom_msg.twist.twist.linear.x < 0: 
-            speed *= -1
-        
-        # in seconds
-        timePassed = (self.roomBot.timeOfLastUpdate - ts) / 1000000
+		speed = math.sqrt(odom_msg.twist.twist.linear.x ** 2 + (odom_msg.twist.twist.linear.y ** 2))
+		if odom_msg.twist.twist.linear.y < 0: 
+			speed *= -1
 
-        distance = timePassed * speed
-        self.roomBot.updateDistanceTraveled(distance)
-
-        # update angle 
-        deltaTheta = (odom_msg.twist.twist.linear.z) * timePassed
-        self.roomBot.updateAngle(deltaTheta)
+		# in seconds
+		timePassed = (ts - prevTs).total_seconds()
 
 
-        # TODO : TEST CALCULATED ORIENTATIONS
+		distance = timePassed * speed
+		self.roomBot.updateDistanceTraveled(distance)
+
+		# update angle 
+		deltaTheta = (odom_msg.twist.twist.angular.z) * timePassed
+		self.roomBot.updateAngle(deltaTheta)
+
+		rospy.loginfo("linear.x: %f, linear.y: %f, angular.z: %f", \
+			odom_msg.twist.twist.linear.x, \
+			odom_msg.twist.twist.linear.y, \
+			odom_msg.twist.twist.angular.z)
+
+		#rospy.loginfo("speed: %f, time passed: %f, distance traveled: %f, deltaTheta: %f", speed, timePassed, distance, deltaTheta)
 
 
+		# TODO : TEST CALCULATED ORIENTATIONS
 		# update real location in RoomBot
 		# calculate accuracy
 		x = odom_msg.pose.pose.position.x
 		y = odom_msg.pose.pose.position.y
-		rospy.loginfo(x)
-		realLoc = Location(x, y, datetime.now()) # TODO
+		realLoc = Location(-y, x, datetime.now()) # TODO
 		ddiff = self.roomBot.updateRealLocation(realLoc)
 
 		orientation = [odom_msg.pose.pose.orientation.x, odom_msg.pose.pose.orientation.y, odom_msg.pose.pose.orientation.z, odom_msg.pose.pose.orientation.w]
 		(roll, pitch, yaw) = euler_from_quaternion(orientation)
 
 		realAngle = self.yaw_to_theta(yaw)
-		rospy.loginfo("real angle: " + str(realAngle))
 		adiff = self.roomBot.updateRealAngle(realAngle)
+
+		self.roomBot.updateRecord()
 
 		return
 
 
 	def get_index_from_theta(self, data, theta):
 		""" 
-        theta in radians from front of car
-        """
+		theta in radians from front of car
+		"""
 		return int((theta - data.angle_min)/data.angle_increment)
 
 
@@ -126,7 +135,7 @@ class MapScan:
 def main(args):
 	rospy.init_node("Mapping_node", anonymous=True)
 	wf = MapScan()
-	atexit.register(wf.roomBot.map.generatePNG)
+	atexit.register(wf.roomBot.end)
 
 	try:
 		rospy.sleep(0.1)

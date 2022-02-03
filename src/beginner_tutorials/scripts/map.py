@@ -22,6 +22,28 @@ class Map:
 			self.minY = 0
 			self.maxY = 0
 
+		def instantiateLocationOffset(self, loc):
+			if self.minX == 0:
+				self.minX = loc.x()
+			else:
+				self.minX = min(loc.x(), self.minX)
+
+			if self.maxX == 0:
+				self.maxX = loc.x()
+			else:
+				self.maxX = max(loc.x(), self.maxX)
+
+			if self.minY == 0:
+				self.minY = loc.y()
+			else:
+				self.minY = min(loc.y(), self.minY)
+
+			if self.maxY == 0:
+				self.maxY = loc.y()
+			else:
+				self.maxY = max(loc.y(), self.maxY)
+
+
 		def updateOutline(self, loc):
 			if loc.x() < self.minX:
 				self.minX = loc.x()
@@ -43,7 +65,7 @@ class Map:
 		# x > 0, y > 0
 		def adjustLoc(self, loc):
 			x = (loc.x() - self.minX) * self.PIXEL_ADJUST
-			y = (loc.y() - self.minY) * self.PIXEL_ADJUST
+			y = (self.maxY - loc.y()) * self.PIXEL_ADJUST
 			return Location(int(x), int(y), loc.timestamp())
 
 		def adjustWidth(self):
@@ -58,35 +80,68 @@ class Map:
 
 		self.runStartTime = datetime.now()
 		self.map = []
+
+		# replaced in ros simulator
 		self.pathTraveled = [Location(0, 0, self.runStartTime)] # stores path coordinates
 		# design system to account for repeat values later
 
+		self.realPathTraveled = []
+
 		self.outline = self.Outline()
+
+
+	def instantiateStartingLocation(self, loc):
+		self.pathTraveled = [loc]
+		self.outline.instantiateLocationOffset(loc)
+
 
 	def getLastLocation(self):
 		return self.pathTraveled[-1]
 
-	def addPathTraveled(self, path):
-		self.pathTraveled = path
+	def addPathTraveled(self, loc):
+		self.pathTraveled.append(loc)
+		self.outline.updateOutline(loc)
+
+	def addRealPathTraveled(self, loc, deltaDist):
+		self.realPathTraveled.append((loc, deltaDist))
+		self.outline.updateOutline(loc)
 
 	def addMapCoordinate(self, loc):
 		self.map.append(loc)
 		self.outline.updateOutline(loc)
 
 	def generatePNG(self):
-		rospy.loginfo("generating image")
+		print("generating image")
 		
 		# null image
 		if self.outline.width() == 0 or self.outline.height() == 0:
 			return
 
 		imageDimensions = (self.outline.adjustWidth(), self.outline.adjustHeight())
-		rospy.loginfo(imageDimensions)
+		print("image-dimensions: " + str(imageDimensions))
 		img = Image.new('RGB', imageDimensions, "white")
 
-		for loc in self.map:
+
+		def drawPixel(loc, rgb):
 			adjustedLoc = self.outline.adjustLoc(loc)
-			img.putpixel((adjustedLoc.x(), adjustedLoc.y()), (0, 0, 0))
+
+			try:
+				img.putpixel((adjustedLoc.x(), adjustedLoc.y()), rgb)
+			except IndexError as e:
+				print(adjustedLoc)
+				print(e)
+
+		for loc in self.map:
+			drawPixel(loc, (0, 0, 0))
+
+
+		for loc in self.pathTraveled:
+			drawPixel(loc, (255, 0, 0))
+
+		for path in self.realPathTraveled:
+			shadeOfGreen = int((path[1]/1.5) * 255)
+			drawPixel(path[0], (0, shadeOfGreen, 0))
+
 
 		img.save(self.nameOfRun + ".jpg")
 		img.show()

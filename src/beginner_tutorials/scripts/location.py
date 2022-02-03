@@ -19,7 +19,7 @@ class Location:
 		return self.Ts
 
 	def __str__(self):
-		time_string = self.Ts.strftime("%H:%M:%S")
+		time_string = self.Ts.strftime("%H:%M:%S:%f")
 		return "x: " + str(self.X) + ", y: " + str(self.Y) + ", time: " + time_string
 
 
